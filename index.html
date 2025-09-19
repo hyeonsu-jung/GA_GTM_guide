@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KT nasmedia | Google Analytics, Tag Manager 가이드 센터</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: #E60012;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-left: 15px;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Navigation */
+        .nav-container {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 72px;
+            z-index: 999;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-section {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #E60012;
+            border-radius: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-menu a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-menu a:hover {
+            background: #fff3f3;
+            color: #E60012;
+        }
+
+        .nav-menu a.active {
+            background: #E60012;
+            color: white;
+        }
+
+        /* Dynamic Content Area */
+        .dynamic-content {
+            min-height: 400px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 60px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dynamic-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, rgba(230, 0, 18, 0.1) 0%, rgba(230, 0, 18, 0.02) 100%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Content Sections */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Default Home Section */
+        .home-section {
+            text-align: center;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 40px auto 0;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #E60012;
+            box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.1);
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #E60012;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #cc0010;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Topic Grid */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .topic-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .topic-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #E60012 0%, #ff3333 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .topic-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .topic-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .topic-meta {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topic-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .topic-arrow {
+            color: #E60012;
+            font-size: 18px;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(to right, #E60012, #ff6666);
+            z-index: 0;
+        }
+
+        .step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 3px solid #E60012;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #E60012;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Resource List */
+        .resource-list {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .resource-item {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+
+        .resource-item:hover {
+            background: #fafafa;
+            padding-left: 30px;
+        }
+
+        .resource-info {
+            flex: 1;
+        }
+
+        .resource-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .resource-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .resource-action {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #E60012;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #cc0010;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: white;
+            padding: 40px;
+            margin: 60px auto;
+            max-width: 1400px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #E60012;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #aaa;
+            text-decoration: none;
+            margin-bottom: 8px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        /* Search Results */
+        .search-results {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-results h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .search-result-item {
+            padding: 15px;
+            border-left: 4px solid #E60012;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .search-result-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #E60012 0%, #ff3333 100%);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(230, 0, 18, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(230, 0, 18, 0.4);
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chatbot-window.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #E60012 0%, #ff3333 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .chatbot-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .message.user .message-content {
+            background: #E60012;
+            color: white;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .message.bot .message-avatar {
+            background: #E60012;
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .chatbot-input {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input input:focus {
+            border-color: #E60012;
+        }
+
+        .chatbot-send {
+            background: #E60012;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .chatbot-send:hover {
+            background: #cc0010;
+            transform: scale(1.1);
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-action-btn {
+            background: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action-btn:hover {
+            background: #E60012;
+            color: white;
+            border-color: #E60012;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 18px;
+            max-width: 80px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .process-steps {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .process-steps::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-header h1 {
+                font-size: 28px;
+            }
+
+            .topic-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tagline {
+                margin: 10px 0 0 0;
+                padding: 10px 0 0 0;
+                border-left: none;
+                border-top: 1px solid rgba(255,255,255,0.3);
+            }
+
+            .resource-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .resource-action {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+            }
+
+            /* 모바일 챗봇 스타일 */
+            .chatbot-window {
+                width: 300px;
+                height: 450px;
+                bottom: 70px;
+            }
+
+            .chatbot-toggle {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div style="display: flex; align-items: center;">
+                <div class="logo"><span><a onclick="showContent('home')">KT nasmedia</a></span></div>
+                <div class="tagline">Google Analytics, Tag Manager 가이드 센터</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-section">
+                <div class="nav-title">Google Analytics</div>
+                <div class="nav-menu">
+                    <a onclick="showContent('ga-intro')">Intro</a>
+                    <a onclick="showContent('ga-understanding')">GA 이해</a>
+                    <a onclick="showContent('ga-setup')">가입 및 설치</a>
+                    <a onclick="showContent('ga-events')">이벤트 설정</a>
+                    <a onclick="showContent('ga-integration')">연동 매뉴얼</a>
+                    <a onclick="showContent('ga-ecommerce')">전자상거래 태그</a>
+                    <a onclick="showContent('ga-conversion')">전환(주요 이벤트)</a>
+                    <a onclick="showContent('ga-audience')">잠재고객 설정</a>
+                    <a onclick="showContent('ga-case')">사례 연구</a>
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Google Tag Manager</div>
+                <div class="nav-menu">
+                    <a onclick="showContent('gtm-intro')">Intro</a>
+                    <a onclick="showContent('gtm-setup')">가입 및 설치</a>
+                    <a onclick="showContent('gtm-operation')">운영 방법</a>
+                    <a onclick="showContent('gtm-datalayer')">데이터 레이어</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dynamic Content Area -->
+    <section class="dynamic-content">
+        <!-- Home Section -->
+        <div id="home" class="content-section home-section active">
+            <div class="section-header">
+                <h1>GA & GTM 마스터 가이드</h1>
+                <p>Google Analytics와 Tag Manager를 완벽하게 활용하기 위한<br>체계적인 가이드와 실무 자료를 제공합니다</p>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="찾고 싶은 가이드나 자료를 검색하세요..." id="searchInput" onkeypress="handleSearchKeyPress(event)">
+                <button onclick="searchResources()">🔍</button>
+            </div>
+            <div class="search-results" id="searchResults">
+                <h3>검색 결과</h3>
+                <div id="searchResultsList"></div>
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card" onclick="showContent('ga-intro')">
+                    <div class="topic-icon">📊</div>
+                    <div class="topic-title">Google Analytics 시작하기</div>
+                    <div class="topic-description">GA4의 기본 개념과 초기 설정 방법을 단계별로 안내합니다</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">15개 가이드</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card" onclick="showContent('gtm-intro')">
+                    <div class="topic-icon">🏷️</div>
+                    <div class="topic-title">Tag Manager 마스터</div>
+                    <div class="topic-description">GTM을 활용한 효율적인 태그 관리 방법을 학습합니다</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">12개 가이드</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card" onclick="showContent('ga-ecommerce')">
+                    <div class="topic-icon">🛒</div>
+                    <div class="topic-title">이커머스 추적</div>
+                    <div class="topic-description">온라인 쇼핑몰의 매출과 전환을 정확하게 측정합니다</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">8개 가이드</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GA Intro Section -->
+        <div id="ga-intro" class="content-section">
+            <div class="section-header">
+                <h1>Google Analytics 소개</h1>
+                <p>웹사이트와 앱의 사용자 행동을 이해하고 비즈니스 인사이트를 발견하세요</p>
+            </div>
+            <div class="process-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-title">계정 생성</div>
+                    <div class="step-desc">Google 계정으로 GA4 시작</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-title">속성 설정</div>
+                    <div class="step-desc">웹사이트 정보 입력</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-title">태그 설치</div>
+                    <div class="step-desc">추적 코드 삽입</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-title">데이터 수집</div>
+                    <div class="step-desc">실시간 분석 시작</div>
+                </div>
+            </div>
+            <div class="resource-list">
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">GA4 마이그레이션 가이드</div>
+                        <div class="resource-desc">Universal Analytics에서 GA4로 전환하는 상세 가이드</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-secondary" onclick="previewResource('GA4 마이그레이션 가이드')">미리보기</button>
+                        <button class="btn btn-primary" onclick="downloadResource('GA4 마이그레이션 가이드')">다운로드</button>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">GA4 인터페이스 완벽 가이드</div>
+                        <div class="resource-desc">새로운 GA4 인터페이스의 모든 기능을 마스터하세요</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-secondary" onclick="previewResource('GA4 인터페이스 완벽 가이드')">미리보기</button>
+                        <button class="btn btn-primary" onclick="downloadResource('GA4 인터페이스 완벽 가이드')">다운로드</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GA Understanding Section -->
+        <div id="ga-understanding" class="content-section">
+            <div class="section-header">
+                <h1>Google Analytics 이해하기</h1>
+                <p>GA4의 핵심 개념과 데이터 모델을 깊이 있게 이해합니다</p>
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <div class="topic-icon">📈</div>
+                    <div class="topic-title">측정 프로토콜</div>
+                    <div class="topic-description">서버 사이드 데이터 전송 방법과 API 활용법</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">상세보기</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">🎯</div>
+                    <div class="topic-title">사용자 중심 측정</div>
+                    <div class="topic-description">User-ID와 Google Signals를 활용한 크로스 플랫폼 추적</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">상세보기</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">🔍</div>
+                    <div class="topic-title">데이터 수집 원리</div>
+                    <div class="topic-description">쿠키, 세션, 이벤트 기반 데이터 수집 메커니즘</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">상세보기</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GA Setup Section -->
+        <div id="ga-setup" class="content-section">
+            <div class="section-header">
+                <h1>GA4 가입 및 설치</h1>
+                <p>웹사이트에 GA4를 올바르게 설치하고 구성하는 방법</p>
+            </div>
+            <div class="resource-list">
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">gtag.js 설치 가이드</div>
+                        <div class="resource-desc">직접 설치 방식으로 GA4 태그를 웹사이트에 추가</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-primary" onclick="downloadResource('gtag.js 설치 가이드')">다운로드</button>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">GTM을 통한 GA4 설치</div>
+                        <div class="resource-desc">Google Tag Manager를 활용한 효율적인 설치 방법</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-primary" onclick="downloadResource('GTM을 통한 GA4 설치')">다운로드</button>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">WordPress 플러그인 설치</div>
+                        <div class="resource-desc">WordPress 사이트에 GA4를 쉽게 설치하는 방법</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-primary" onclick="downloadResource('WordPress 플러그인 설치')">다운로드</button>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">SPA 웹사이트 설치</div>
+                        <div class="resource-desc">React, Vue, Angular 등 SPA에서의 구현 방법</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-primary" onclick="downloadResource('SPA 웹사이트 설치')">다운로드</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GA Events Section -->
+        <div id="ga-events" class="content-section">
+            <div class="section-header">
+                <h1>이벤트 설정</h1>
+                <p>사용자 상호작용을 정확하게 추적하기 위한 이벤트 구성</p>
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <div class="topic-icon">🖱️</div>
+                    <div class="topic-title">클릭 이벤트</div>
+                    <div class="topic-description">버튼, 링크, 이미지 클릭 추적 설정</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">5개 템플릿</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">📜</div>
+                    <div class="topic-title">스크롤 이벤트</div>
+                    <div class="topic-description">페이지 스크롤 깊이 측정 설정</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">3개 템플릿</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">🎥</div>
+                    <div class="topic-title">동영상 이벤트</div>
+                    <div class="topic-description">YouTube, Vimeo 동영상 추적</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">4개 템플릿</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-icon">📝</div>
+                    <div class="topic-title">폼 제출 이벤트</div>
+                    <div class="topic-description">문의, 회원가입 폼 추적 설정</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">6개 템플릿</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional sections for other menu items -->
+        <div id="ga-integration" class="content-section">
+            <div class="section-header">
+                <h1>연동 매뉴얼</h1>
+                <p>다양한 플랫폼과 도구들과 GA4를 연동하는 방법</p>
+            </div>
+            <div class="resource-list">
+                <div class="resource-item">
+                    <div class="resource-info">
+                        <div class="resource-title">Google Ads 연동</div>
+                        <div class="resource-desc">광고 성과와 웹사이트 데이터를 통합 분석</div>
+                    </div>
+                    <div class="resource-action">
+                        <button class="btn btn-primary" onclick="downloadResource('Google Ads 연동')">다운로드</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ga-ecommerce" class="content-section">
+            <div class="section-header">
+                <h1>전자상거래 태그</h1>
+                <p>온라인 쇼핑몰의 매출과 구매 전환을 정확하게 추적</p>
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <div class="topic-icon">💰</div>
+                    <div class="topic-title">Enhanced Ecommerce</div>
+                    <div class="topic-description">상품 조회, 장바구니 추가, 구매 완료 등 전체 구매 과정 추적</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">상세보기</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ga-conversion" class="content-section">
+            <div class="section-header">
+                <h1>전환(주요 이벤트)</h1>
+                <p>비즈니스 목표 달성을 측정하는 전환 이벤트 설정</p>
+            </div>
+        </div>
+
+        <div id="ga-audience" class="content-section">
+            <div class="section-header">
+                <h1>잠재고객 설정</h1>
+                <p>타겟 마케팅을 위한 사용자 세그먼테이션</p>
+            </div>
+        </div>
+
+        <div id="ga-case" class="content-section">
+            <div class="section-header">
+                <h1>사례 연구</h1>
+                <p>실제 비즈니스에서 활용한 GA4 성공 사례들</p>
+            </div>
+        </div>
+
+        <!-- GTM Sections -->
+        <div id="gtm-intro" class="content-section">
+            <div class="section-header">
+                <h1>Google Tag Manager 소개</h1>
+                <p>코드 수정 없이 태그를 효율적으로 관리하는 방법</p>
+            </div>
+            <div class="topic-grid">
+                <div class="topic-card">
+                    <div class="topic-icon">🏷️</div>
+                    <div class="topic-title">GTM 기본 개념</div>
+                    <div class="topic-description">태그, 트리거, 변수의 개념과 작동 원리</div>
+                    <div class="topic-meta">
+                        <span class="topic-count">상세보기</span>
+                        <span class="topic-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gtm-setup" class="content-section">
+            <div class="section-header">
+                <h1>GTM 가입 및 설치</h1>
+                <p>Google Tag Manager 컨테이너 설정과 설치 방법</p>
+            </div>
+        </div>
+
+        <div id="gtm-operation" class="content-section">
+            <div class="section-header">
+                <h1>GTM 운영 방법</h1>
+                <p>태그 관리, 디버깅, 버전 관리 등 실무 운영 가이드</p>
+            </div>
+        </div>
+
+        <div id="gtm-datalayer" class="content-section">
+            <div class="section-header">
+                <h1>데이터 레이어</h1>
+                <p>구조화된 데이터 전송을 위한 데이터 레이어 구현</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">실무 가이드</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">활용 사례</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">업데이트</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">무료</div>
+                <div class="stat-label">모든 자료</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Google Analytics</h4>
+                <a href="#" onclick="showContent('ga-intro')">GA4 소개</a>
+                <a href="#" onclick="showContent('ga-setup')">설치 가이드</a>
+                <a href="#" onclick="showContent('ga-events')">이벤트 설정</a>
+                <a href="#" onclick="showContent('ga-ecommerce')">이커머스 추적</a>
+            </div>
+            <div class="footer-section">
+                <h4>Google Tag Manager</h4>
+                <a href="#" onclick="showContent('gtm-intro')">GTM 소개</a>
+                <a href="#" onclick="showContent('gtm-setup')">설치 가이드</a>
+                <a href="#" onclick="showContent('gtm-operation')">운영 방법</a>
+                <a href="#" onclick="showContent('gtm-datalayer')">데이터 레이어</a>
+            </div>
+            <div class="footer-section">
+                <h4>지원</h4>
+                <a href="#">FAQ</a>
+                <a href="#">문의하기</a>
+                <a href="#">커뮤니티</a>
+                <a href="#">블로그</a>
+            </div>
+            <div class="footer-section">
+                <h4>회사</h4>
+                <a href="#">KT nasmedia 소개</a>
+                <a href="#">채용 정보</a>
+                <a href="#">파트너십</a>
+                <a href="#">개인정보처리방침</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 KT nasmedia. All rights reserved. | Google Analytics & Tag Manager 전문 가이드 센터</p>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" onclick="toggleChatbot()">
+            💬
+        </button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-title">GA & GTM 가이드 AI</div>
+                <button class="chatbot-close" onclick="toggleChatbot()">×</button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        안녕하세요! GA & GTM 가이드 AI입니다. 
+                        <br><br>
+                        무엇을 도와드릴까요?
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" onclick="sendQuickMessage('GA4 설치 방법')">GA4 설치</button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('GTM 설정')">GTM 설정</button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('이벤트 추적')">이벤트 추적</button>
+                            <button class="quick-action-btn" onclick="sendQuickMessage('전자상거래')">전자상거래</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="질문을 입력하세요..." onkeypress="handleChatbotKeyPress(event)">
+                <button class="chatbot-send" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 메뉴 활성화 및 콘텐츠 표시 함수
+        function showContent(contentId) {
+            // 모든 콘텐츠 섹션 숨기기
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // 선택된 콘텐츠 표시
+            const targetSection = document.getElementById(contentId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            // 메뉴 활성화 상태 업데이트
+            const menuItems = document.querySelectorAll('.nav-menu a');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 클릭된 메뉴 항목 활성화
+            event.target.classList.add('active');
+            
+            // 검색 결과 숨기기
+            const searchResults = document.getElementById('searchResults');
+            if (searchResults) {
+                searchResults.classList.remove('active');
+            }
+        }
+
+        // 검색 기능
+        function searchResources() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                hideSearchResults();
+                return;
+            }
+            
+            // 검색 가능한 콘텐츠 데이터
+            const searchData = [
+                { title: 'GA4 마이그레이션 가이드', description: 'Universal Analytics에서 GA4로 전환하는 상세 가이드', category: 'Google Analytics' },
+                { title: 'GA4 인터페이스 완벽 가이드', description: '새로운 GA4 인터페이스의 모든 기능을 마스터하세요', category: 'Google Analytics' },
+                { title: 'gtag.js 설치 가이드', description: '직접 설치 방식으로 GA4 태그를 웹사이트에 추가', category: 'Google Analytics' },
+                { title: 'GTM을 통한 GA4 설치', description: 'Google Tag Manager를 활용한 효율적인 설치 방법', category: 'Google Analytics' },
+                { title: 'WordPress 플러그인 설치', description: 'WordPress 사이트에 GA4를 쉽게 설치하는 방법', category: 'Google Analytics' },
+                { title: 'SPA 웹사이트 설치', description: 'React, Vue, Angular 등 SPA에서의 구현 방법', category: 'Google Analytics' },
+                { title: '클릭 이벤트', description: '버튼, 링크, 이미지 클릭 추적 설정', category: 'Google Analytics' },
+                { title: '스크롤 이벤트', description: '페이지 스크롤 깊이 측정 설정', category: 'Google Analytics' },
+                { title: '동영상 이벤트', description: 'YouTube, Vimeo 동영상 추적', category: 'Google Analytics' },
+                { title: '폼 제출 이벤트', description: '문의, 회원가입 폼 추적 설정', category: 'Google Analytics' },
+                { title: 'Enhanced Ecommerce', description: '상품 조회, 장바구니 추가, 구매 완료 등 전체 구매 과정 추적', category: 'Google Analytics' },
+                { title: 'GTM 기본 개념', description: '태그, 트리거, 변수의 개념과 작동 원리', category: 'Google Tag Manager' },
+                { title: '데이터 레이어', description: '구조화된 데이터 전송을 위한 데이터 레이어 구현', category: 'Google Tag Manager' }
+            ];
+            
+            // 검색 수행
+            const results = searchData.filter(item => 
+                item.title.toLowerCase().includes(searchTerm) || 
+                item.description.toLowerCase().includes(searchTerm) ||
+                item.category.toLowerCase().includes(searchTerm)
+            );
+            
+            displaySearchResults(results, searchTerm);
+        }
+
+        // 검색 결과 표시
+        function displaySearchResults(results, searchTerm) {
+            const searchResults = document.getElementById('searchResults');
+            const searchResultsList = document.getElementById('searchResultsList');
+            
+            if (results.length === 0) {
+                searchResultsList.innerHTML = `<p style="color: #666; text-align: center; padding: 20px;">
+                    "${searchTerm}"에 대한 검색 결과를 찾을 수 없습니다.
+                </p>`;
+            } else {
+                searchResultsList.innerHTML = results.map(result => `
+                    <div class="search-result-item">
+                        <div class="search-result-title">${result.title}</div>
+                        <div class="search-result-desc">${result.description}</div>
+                        <div style="margin-top: 5px; font-size: 12px; color: #999;">${result.category}</div>
+                    </div>
+                `).join('');
+            }
+            
+            searchResults.classList.add('active');
+        }
+
+        // 검색 결과 숨기기
+        function hideSearchResults() {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.classList.remove('active');
+        }
+
+        // Enter 키로 검색
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchResources();
+            }
+        }
+
+        // 리소스 미리보기
+        function previewResource(resourceName) {
+            alert(`"${resourceName}" 미리보기 기능입니다. 실제 구현에서는 모달이나 새 창으로 내용을 표시합니다.`);
+        }
+
+        // 리소스 다운로드
+        function downloadResource(resourceName) {
+            alert(`"${resourceName}" 다운로드 기능입니다. 실제 구현에서는 파일 다운로드가 시작됩니다.`);
+        }
+
+        // 검색 입력창 외부 클릭 시 검색 결과 숨기기
+        document.addEventListener('click', function(event) {
+            const searchBox = document.querySelector('.search-box');
+            const searchResults = document.getElementById('searchResults');
+            
+            if (!searchBox.contains(event.target)) {
+                hideSearchResults();
+            }
+        });
+
+        // 챗봇 관련 함수들
+        function toggleChatbot() {
+            const chatbotWindow = document.getElementById('chatbotWindow');
+            chatbotWindow.classList.toggle('active');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatbotInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            // 사용자 메시지 추가
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // 타이핑 인디케이터 표시
+            showTypingIndicator();
+            
+            // 봇 응답 생성 (지연 시간 시뮬레이션)
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateBotResponse(message);
+                addMessage(response, 'bot');
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('chatbotInput').value = message;
+            sendMessage();
+        }
+
+        function addMessage(content, sender) {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'bot' ? '🤖' : '👤';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            
+            // 스크롤을 맨 아래로
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = '🤖';
+            
+            const typingContent = document.createElement('div');
+            typingContent.className = 'typing-indicator';
+            typingContent.style.display = 'flex';
+            typingContent.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(typingContent);
+            messagesContainer.appendChild(typingDiv);
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function handleChatbotKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function generateBotResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // GA4 관련 질문
+            if (message.includes('ga4') || message.includes('google analytics')) {
+                if (message.includes('설치') || message.includes('설정')) {
+                    return `
+                        <strong>GA4 설치 방법</strong><br><br>
+                        1. <a href="#" onclick="showContent('ga-setup')">GA4 계정 생성</a><br>
+                        2. 속성 및 데이터 스트림 설정<br>
+                        3. gtag.js 코드 설치<br>
+                        4. GTM을 통한 설치 (권장)<br><br>
+                        <a href="#" onclick="showContent('ga-setup')" style="color: #E60012;">상세 가이드 보기 →</a>
+                    `;
+                } else if (message.includes('이벤트') || message.includes('추적')) {
+                    return `
+                        <strong>GA4 이벤트 추적</strong><br><br>
+                        • 클릭 이벤트: 버튼, 링크 클릭<br>
+                        • 스크롤 이벤트: 페이지 깊이 측정<br>
+                        • 동영상 이벤트: 재생, 완료 추적<br>
+                        • 폼 이벤트: 제출, 오류 추적<br><br>
+                        <a href="#" onclick="showContent('ga-events')" style="color: #E60012;">이벤트 설정 가이드 →</a>
+                    `;
+                } else if (message.includes('전자상거래') || message.includes('이커머스')) {
+                    return `
+                        <strong>GA4 전자상거래 추적</strong><br><br>
+                        Enhanced Ecommerce를 통해:<br>
+                        • 상품 조회 추적<br>
+                        • 장바구니 추가/제거<br>
+                        • 구매 완료 추적<br>
+                        • 매출 데이터 분석<br><br>
+                        <a href="#" onclick="showContent('ga-ecommerce')" style="color: #E60012;">전자상거래 가이드 →</a>
+                    `;
+                } else {
+                    return `
+                        <strong>Google Analytics 4 (GA4)</strong><br><br>
+                        GA4는 Google의 최신 웹 분석 도구입니다.<br><br>
+                        주요 기능:<br>
+                        • 사용자 중심 측정<br>
+                        • 머신러닝 기반 인사이트<br>
+                        • 크로스 플랫폼 추적<br>
+                        • 향상된 전자상거래<br><br>
+                        <a href="#" onclick="showContent('ga-intro')" style="color: #E60012;">GA4 소개 보기 →</a>
+                    `;
+                }
+            }
+            
+            // GTM 관련 질문
+            else if (message.includes('gtm') || message.includes('tag manager')) {
+                if (message.includes('설치') || message.includes('설정')) {
+                    return `
+                        <strong>GTM 설치 방법</strong><br><br>
+                        1. GTM 계정 및 컨테이너 생성<br>
+                        2. GTM 코드를 웹사이트에 설치<br>
+                        3. 태그, 트리거, 변수 설정<br>
+                        4. 미리보기 및 디버깅<br><br>
+                        <a href="#" onclick="showContent('gtm-setup')" style="color: #E60012;">GTM 설치 가이드 →</a>
+                    `;
+                } else if (message.includes('운영') || message.includes('관리')) {
+                    return `
+                        <strong>GTM 운영 방법</strong><br><br>
+                        • 태그 관리: GA4, Facebook Pixel 등<br>
+                        • 트리거 설정: 페이지뷰, 클릭 등<br>
+                        • 변수 활용: 동적 데이터 전송<br>
+                        • 버전 관리 및 배포<br><br>
+                        <a href="#" onclick="showContent('gtm-operation')" style="color: #E60012;">운영 가이드 보기 →</a>
+                    `;
+                } else if (message.includes('데이터 레이어')) {
+                    return `
+                        <strong>데이터 레이어</strong><br><br>
+                        구조화된 데이터를 GTM으로 전송하는 방법:<br>
+                        • dataLayer.push() 사용<br>
+                        • 이벤트 데이터 전송<br>
+                        • 사용자 정의 변수 설정<br>
+                        • GA4 Enhanced Ecommerce 연동<br><br>
+                        <a href="#" onclick="showContent('gtm-datalayer')" style="color: #E60012;">데이터 레이어 가이드 →</a>
+                    `;
+                } else {
+                    return `
+                        <strong>Google Tag Manager (GTM)</strong><br><br>
+                        GTM은 코드 수정 없이 태그를 관리할 수 있는 도구입니다.<br><br>
+                        주요 기능:<br>
+                        • 태그 중앙 관리<br>
+                        • 실시간 디버깅<br>
+                        • 버전 관리<br>
+                        • 권한 관리<br><br>
+                        <a href="#" onclick="showContent('gtm-intro')" style="color: #E60012;">GTM 소개 보기 →</a>
+                    `;
+                }
+            }
+            
+            // 전환 관련 질문
+            else if (message.includes('전환') || message.includes('conversion')) {
+                return `
+                    <strong>GA4 전환 설정</strong><br><br>
+                    비즈니스 목표를 전환 이벤트로 설정:<br>
+                    • 구매 완료<br>
+                    • 회원가입<br>
+                    • 문의 폼 제출<br>
+                    • 파일 다운로드<br><br>
+                    <a href="#" onclick="showContent('ga-conversion')" style="color: #E60012;">전환 설정 가이드 →</a>
+                `;
+            }
+            
+            // 잠재고객 관련 질문
+            else if (message.includes('잠재고객') || message.includes('audience')) {
+                return `
+                    <strong>GA4 잠재고객 설정</strong><br><br>
+                    사용자 세그먼테이션을 통한 타겟 마케팅:<br>
+                    • 행동 기반 잠재고객<br>
+                    • 인구통계학적 잠재고객<br>
+                    • 기술적 잠재고객<br>
+                    • Google Ads 연동<br><br>
+                    <a href="#" onclick="showContent('ga-audience')" style="color: #E60012;">잠재고객 가이드 →</a>
+                `;
+            }
+            
+            // 일반적인 질문
+            else if (message.includes('안녕') || message.includes('hello') || message.includes('hi')) {
+                return `
+                    안녕하세요! 👋<br><br>
+                    GA & GTM 가이드 AI입니다.<br>
+                    Google Analytics나 Tag Manager에 대해<br>
+                    궁금한 것이 있으시면 언제든 물어보세요!
+                `;
+            }
+            
+            else if (message.includes('도움') || message.includes('help')) {
+                return `
+                    <strong>도움말</strong><br><br>
+                    다음과 같은 주제에 대해 도움을 드릴 수 있습니다:<br><br>
+                    • GA4 설치 및 설정<br>
+                    • GTM 운영 방법<br>
+                    • 이벤트 추적 설정<br>
+                    • 전자상거래 추적<br>
+                    • 전환 및 잠재고객 설정<br><br>
+                    구체적인 질문을 해주시면 더 정확한 답변을 드릴 수 있습니다!
+                `;
+            }
+            
+            // 기본 응답
+            else {
+                return `
+                    죄송합니다. 해당 질문에 대한 답변을 찾을 수 없습니다.<br><br>
+                    다음과 같은 키워드로 질문해보세요:<br>
+                    • "GA4 설치"<br>
+                    • "GTM 설정"<br>
+                    • "이벤트 추적"<br>
+                    • "전자상거래"<br>
+                    • "전환 설정"<br><br>
+                    또는 <a href="#" onclick="showContent('home')" style="color: #E60012;">홈페이지</a>에서 관련 가이드를 찾아보세요!
+                `;
+            }
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 홈 섹션을 기본으로 표시
+            showContent('home');
+        });
+    </script>
+</body>
+</html>
