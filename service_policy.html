@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이용약관 | KT nasmedia GA4 & GTM 가이드 센터</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body class="has-sidebar">
+    <div id="header"></div>
+    <div id="sidebar"></div>
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">이용약관</h1>
+            </div>
+
+<p class="hero-subtitle">
+1. 서비스 이용 조건
+<br>
+해당 서비스 이용 시 본 약관에 동의한 것으로 간주합니다. 사용자의 편의를 위해 구글 로그인을 제공하며, 구글의 개인정보처리방침이 별도로 적용됩니다. 
+<br><br>
+2. 서비스 이용 제한
+<br>
+다음과 같은 행위는 금지됩니다:<br>
+- 불법적인 정보의 게시 또는 전송<br>
+- 타인의 개인정보 도용<br>
+- 시스템 해킹 등 서비스 운영을 방해하는 행위는
+<br><br>
+3. 책임의 제한<br>
+본 서비스 이용과 관련하여 입은 손해에 대해 책임을 지지 않습니다.
+<br><br>
+4. 약관 변경<br>
+본 서비스는 필요에 따라 약관을 변경할 수 있으며, 변경된 약관은 웹사이트에 공지합니다.
+</div>
+    </main>
+    <div id="footer"></div>
+    <div id="chatbot"></div>
+    <script src="js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            fetch('includes/header.html').then(r=>r.text()).then(h=>{ document.getElementById('header').innerHTML=h; });
+            fetch('includes/sidebar.html').then(r=>r.text()).then(s=>{ document.getElementById('sidebar').innerHTML=s; });
+            fetch('includes/footer.html').then(r=>r.text()).then(f=>{ document.getElementById('footer').innerHTML=f; });
+            fetch('includes/chatbot.html').then(r=>r.text()).then(b=>{ document.getElementById('chatbot').innerHTML=b; });
+        });
+    </script>
+</body>
+</html>

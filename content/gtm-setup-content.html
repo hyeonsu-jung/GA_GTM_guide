@@ -1,0 +1,100 @@
+<div class="breadcrumb">
+    <a href="index.html">홈</a> > <a href="gtm-setup.html">Google Tag Manager</a> > GTM 가입 및 설치
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">GTM 가입 및 설치</h1>
+    <p class="page-description">Google Tag Manager 컨테이너 설정과 설치 방법</p>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">GTM 계정 생성</h2>
+    <div class="section-content">
+        <p>Google Tag Manager 계정을 생성하고 컨테이너를 설정하는 방법입니다.</p>
+        
+        <h3>1단계: GTM 계정 생성</h3>
+        <ol>
+            <li><a href="https://tagmanager.google.com" target="_blank">Google Tag Manager</a> 접속</li>
+            <li>Google 계정으로 로그인</n            <li>계정 이름 입력 (예: "회사명")</li>
+            <li>국가 선택</li>
+        </ol>
+
+        <h3>2단계: 컨테이너 생성</h3>
+        <ol>
+            <li>컨테이너 이름 입력 (예: "메인 웹사이트")</li>
+            <li>타겟 플랫폼 선택 (웹, iOS, Android)</li>
+            <li>컨테이너 생성 완료</li>
+        </ol>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">GTM 코드 설치</h2>
+    <div class="section-content">
+        <p>생성된 GTM 컨테이너 코드를 웹사이트에 설치합니다.</p>
+        
+        <h3>설치 코드</h3>
+        <div class="card">
+            <div class="card-title">📝 GTM 코드</div>
+            <div class="card-content">
+<pre>
+<strong>1. Head 섹션</strong>
+<code>&lt;script&gt;
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');
+&lt;/script&gt;
+</code>
+<strong>2. Body 섹션</strong>
+<code>&lt;noscript&gt;
+&lt;iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+height="0" width="0" style="display:none;visibility:hidden">&lt;/iframe&gt;
+&lt;/noscript&gt;
+</code>
+</pre>
+            </div>
+        </div>
+
+        <h3>설치 위치</h3>
+        <ul>
+            <li><strong>Head 섹션:</strong> &lt;head&gt; 태그 바로 아래</li>
+            <li><strong>Body 섹션:</strong> &lt;body&gt; 태그 바로 아래</li>
+        </ul>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">설치 확인</h2>
+    <div class="section-content">
+        <p>GTM이 올바르게 설치되었는지 확인하는 방법입니다.</p>
+        
+        <h3>확인 방법</h3>
+        <ol>
+            <li>웹사이트 방문 후 F12로 개발자 도구 열기</li>
+            <li>Console에서 "Google Tag Manager" 메시지 확인</li>
+            <li>Network 탭에서 gtm.js 요청 확인</li>
+            <li>GTM 미리보기 모드로 테스트</li>
+        </ol>
+
+        <div class="card">
+            <div class="card-title">🔍 GTM 미리보기</div>
+            <div class="card-content">
+                GTM 인터페이스에서 "미리보기" 버튼을 클릭하면 실시간으로 태그 동작을 확인할 수 있습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">다음 단계</h2>
+    <div class="section-content">
+        <p>GTM 설치가 완료되었다면 다음 단계로 진행하세요:</p>
+        <div style="margin-top: 20px;">
+            <a href="gtm-operation.html" class="btn btn-primary">운영 방법</a>
+            <a href="gtm-datalayer.html" class="btn btn-secondary">데이터 레이어</a>
+            <a href="ga-setup.html" class="btn btn-secondary">GA4 연동</a>
+        </div>
+    </div>
+</div>

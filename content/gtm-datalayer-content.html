@@ -1,0 +1,199 @@
+<div class="breadcrumb">
+    <a href="index.html">홈</a> > <a href="gtm-datalayer.html">Google Tag Manager</a> > 데이터 레이어
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">데이터 레이어</h1>
+    <p class="page-description">구조화된 데이터 전송을 위한 데이터 레이어 구현</p>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">데이터 레이어란?</h2>
+    <div class="section-content">
+        <p>데이터 레이어는 웹사이트의 정보를 GTM으로 전달하는 JavaScript 객체입니다. 구조화된 데이터를 통해 정확하고 효율적인 태그 관리를 할 수 있습니다.</p>
+        
+        <h3>데이터 레이어의 장점</h3>
+        <ul>
+            <li><strong>구조화된 데이터:</strong> 일관된 형식으로 데이터 전달</li>
+            <li><strong>유연성:</strong> 다양한 태그에서 동일한 데이터 활용</li>
+            <li><strong>정확성:</strong> 하드코딩된 값보다 정확한 데이터</li>
+            <li><strong>유지보수:</strong> 중앙에서 데이터 관리</li>
+        </ul>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">데이터 레이어 기본 구조</h2>
+    <div class="section-content">
+        <p>데이터 레이어는 dataLayer라는 전역 배열로 구성됩니다.</p>
+        
+        <div class="card">
+            <div class="card-title">📊 기본 구조</div>
+            <div class="card-content">
+                <pre><code>// 데이터 레이어 초기화
+window.dataLayer = window.dataLayer || [];
+
+// 데이터 푸시
+dataLayer.push({
+  'event': 'page_view',
+  'page_title': '홈페이지',
+  'page_location': 'https://example.com',
+  'user_id': '12345'
+});</code></pre>
+            </div>
+        </div>
+
+        <h3>주요 속성</h3>
+        <ul>
+            <li><strong>event:</strong> 이벤트 유형 (필수)</li>
+            <li><strong>page_title:</strong> 페이지 제목</li>
+            <li><strong>page_location:</strong> 페이지 URL</li>
+            <li><strong>user_id:</strong> 사용자 ID</li>
+        </ul>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">이벤트 데이터 전송</h2>
+    <div class="section-content">
+        <p>사용자 행동에 따른 이벤트 데이터를 데이터 레이어로 전송하는 방법입니다.</p>
+        
+        <h3>클릭 이벤트</h3>
+        <div class="card">
+            <div class="card-title">🖱️ 클릭 추적</div>
+            <div class="card-content">
+                <pre><code>// 버튼 클릭 시
+dataLayer.push({
+  'event': 'button_click',
+  'button_name': '다운로드',
+  'button_location': 'header',
+  'click_url': '/download'
+});</code></pre>
+            </div>
+        </div>
+
+        <h3>폼 제출 이벤트</h3>
+        <div class="card">
+            <div class="card-title">📝 폼 추적</div>
+            <div class="card-content">
+                <pre><code>// 폼 제출 시
+dataLayer.push({
+  'event': 'form_submit',
+  'form_name': 'contact_form',
+  'form_id': 'contact',
+  'form_step': 'step1'
+});</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">전자상거래 데이터</h2>
+    <div class="section-content">
+        <p>온라인 쇼핑몰의 구매 과정을 데이터 레이어로 추적하는 방법입니다.</p>
+        
+        <h3>상품 조회</h3>
+        <div class="card">
+            <div class="card-title">🛍️ 상품 추적</div>
+            <div class="card-content">
+                <pre><code>// 상품 페이지 조회 시
+dataLayer.push({
+  'event': 'view_item',
+  'ecommerce': {
+    'currency': 'KRW',
+    'value': 50000,
+    'items': [{
+      'item_id': 'SKU123',
+      'item_name': '무선 이어폰',
+      'category': '전자제품',
+      'quantity': 1,
+      'price': 50000
+    }]
+  }
+});</code></pre>
+            </div>
+        </div>
+
+        <h3>구매 완료</h3>
+        <div class="card">
+            <div class="card-title">✅ 구매 추적</div>
+            <div class="card-content">
+                <pre><code>// 구매 완료 시
+dataLayer.push({
+  'event': 'purchase',
+  'ecommerce': {
+    'transaction_id': 'T12345',
+    'currency': 'KRW',
+    'value': 50000,
+    'tax': 5000,
+    'shipping': 3000,
+    'items': [{
+      'item_id': 'SKU123',
+      'item_name': '무선 이어폰',
+      'category': '전자제품',
+      'quantity': 1,
+      'price': 50000
+    }]
+  }
+});</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">GTM에서 데이터 활용</h2>
+    <div class="section-content">
+        <p>데이터 레이어의 데이터를 GTM에서 변수로 활용하는 방법입니다.</p>
+        
+        <h3>변수 설정</h3>
+        <ol>
+            <li>GTM에서 "변수" 메뉴 클릭</li>
+            <li>"새로 만들기" → "사용자 정의 변수" 선택</li>
+            <li>변수 유형을 "데이터 레이어 변수"로 설정</li>
+            <li>데이터 레이어 변수 이름 입력</li>
+        </ol>
+
+        <div class="card">
+            <div class="card-title">💡 활용 예시</div>
+            <div class="card-content">
+                데이터 레이어에서 전송한 상품 ID, 사용자 등급, 페이지 카테고리 등을 GTM 변수로 설정하여 다양한 태그에서 활용할 수 있습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">데이터 레이어 디버깅</h2>
+    <div class="section-content">
+        <p>데이터 레이어가 올바르게 작동하는지 확인하는 방법입니다.</p>
+        
+        <h3>디버깅 방법</h3>
+        <ol>
+            <li>브라우저 개발자 도구 열기 (F12)</li>
+            <li>Console에서 "dataLayer" 입력</li>
+            <li>데이터 레이어 내용 확인</li>
+            <li>GTM 미리보기 모드에서 변수 값 검증</li>
+        </ol>
+
+        <div class="card">
+            <div class="card-title">🔍 디버깅 팁</div>
+            <div class="card-content">
+                GTM의 미리보기 모드에서는 데이터 레이어의 모든 변수 값을 실시간으로 확인할 수 있어 문제 해결이 쉽습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">다음 단계</h2>
+    <div class="section-content">
+        <p>데이터 레이어 구현이 완료되었다면 다음 단계로 진행하세요:</p>
+        <div style="margin-top: 20px;">
+            <a href="ga-ecommerce.html" class="btn btn-primary">전자상거래 설정</a>
+            <a href="ga-events.html" class="btn btn-secondary">이벤트 설정</a>
+            <a href="index.html" class="btn btn-secondary">홈으로</a>
+        </div>
+    </div>
+</div>

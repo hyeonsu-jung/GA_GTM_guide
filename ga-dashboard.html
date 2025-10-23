@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 실전 연동 체험관 | KT nasmedia GA4 & GTM 가이드 센터</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body class="has-sidebar">
+    <div id="header"></div>
+    <div id="sidebar"></div>
+    <main class="main-content">
+
+<!-- 실제 데이터로 배우기 섹션 -->
+<section class="real-data-section">
+    <div class="real-data-content">
+        <h2 class="real-data-title">실제 데이터로 배우기</h2>
+        <p class="real-data-subtitle">구글 OAuth를 통해 실제 GA4 데이터에 접근하여<br>실무에서 바로 활용할 수 있는 분석 경험을 제공합니다</p>
+        
+        <div class="oauth-features">
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <div class="feature-title">안전한 OAuth 인증</div>
+                <div class="feature-description">구글 계정으로 안전하게 로그인하여 GA4 데이터에 접근</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">실시간 대시보드</div>
+                <div class="feature-description">실제 GA4 데이터를 기반으로 한 실시간 분석 대시보드</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">인터랙티브 차트</div>
+                <div class="feature-description">사용자, 세션, 디바이스별 데이터를 시각화한 차트</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GA4 대시보드 섹션 -->
+<section id="ga4-dashboard-section" class="ga4-dashboard-section">
+    <div class="ga4-container">
+        <div class="ga4-header">
+            <h2>🚀 GA4 Analytics Dashboard</h2>
+            <p>구글 애널리틱스 데이터를 실시간으로 확인하세요</p>
+        </div>
+
+        <!-- API 로드 상태 -->
+        <div class="ga4-status-indicator" id="apiStatus">
+            API 로딩 중... ⏳
+        </div>
+
+        <!-- 인증 섹션 -->
+        <div class="ga4-auth-section" id="authSection">
+            <h3>시작하기</h3>
+            <p>구글 계정으로 로그인하여 GA4 데이터에 접근하세요</p>
+            <button class="ga4-google-login-btn" id="googleLoginBtn" onclick="handleGoogleLogin()" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span id="loginBtnText">API 로딩 중...</span>
+            </button>
+            <div class="ga4-error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- 사용자 정보 및 계정 선택 -->
+        <div class="ga4-user-info" id="userInfo">
+            <img class="ga4-user-avatar" id="userAvatar" src="" alt="사용자">
+            <div style="flex: 1;">
+                <div class="ga4-user-name" id="userName"></div>
+                <div class="ga4-user-email" id="userEmail"></div>
+            </div>
+            <button class="ga4-logout-btn" onclick="handleLogout()">로그아웃</button>
+        </div>
+
+        <div class="ga4-account-selector" id="accountSelector">
+            <h3>GA4 계정 및 속성 선택</h3>
+            
+            <div class="ga4-selector-group">
+                <label for="accountSelect">계정 선택:</label>
+                <select id="accountSelect" onchange="loadProperties()">
+                    <option value="">계정을 선택하세요</option>
+                </select>
+            </div>
+
+            <div class="ga4-selector-group">
+                <label for="propertySelect">속성 선택:</label>
+                <select id="propertySelect" onchange="enableReportButton()">
+                    <option value="">먼저 계정을 선택하세요</option>
+                </select>
+            </div>
+
+            <!-- 날짜 범위 선택 -->
+            <div class="ga4-date-range-selector">
+                <h4>📅 분석 기간 선택</h4>
+                <div class="ga4-date-inputs">
+                    <div class="ga4-date-input-group">
+                        <label for="startDate">시작일:</label>
+                        <input type="date" id="startDate" onchange="updateDateRange()">
+                    </div>
+                    <div class="ga4-date-input-group">
+                        <label for="endDate">종료일:</label>
+                        <input type="date" id="endDate" onchange="updateDateRange()">
+                    </div>
+                </div>
+                <div class="ga4-quick-date-buttons">
+                    <button class="ga4-quick-date-btn" onclick="setQuickDateRange('7days')">최근 7일</button>
+                    <button class="ga4-quick-date-btn" onclick="setQuickDateRange('30days')">최근 30일</button>
+                    <button class="ga4-quick-date-btn" onclick="setQuickDateRange('90days')">최근 90일</button>
+                </div>
+            </div>
+
+            <button class="ga4-load-report-btn" id="loadReportBtn" onclick="loadReport()" disabled>
+                📊 리포트 불러오기
+            </button>
+        </div>
+
+        <!-- 대시보드 -->
+        <div class="ga4-dashboard" id="dashboard">
+            <div class="ga4-loading" id="loading">리포트 데이터를 불러오는 중입니다...</div>
+            
+            <div id="reportContent" style="display: none;">
+                <div class="ga4-dashboard-header">
+                    <h3>📈 GA4 리포트 대시보드</h3>
+                    <div class="ga4-last-updated" id="lastUpdated">마지막 업데이트: -</div>
+                </div>
+                
+                <!-- 주요 지표 카드 -->
+                <div class="ga4-metrics-grid">
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">👥</div>
+                        <div class="ga4-metric-content">
+                            <h4>총 사용자</h4>
+                            <div class="ga4-metric-value" id="totalUsers">-</div>
+                            <div class="ga4-metric-change" id="totalUsersChange">-</div>
+                        </div>
+                    </div>
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">🆕</div>
+                        <div class="ga4-metric-content">
+                            <h4>신규 사용자</h4>
+                            <div class="ga4-metric-value" id="newUsers">-</div>
+                            <div class="ga4-metric-change" id="newUsersChange">-</div>
+                        </div>
+                    </div>
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">📊</div>
+                        <div class="ga4-metric-content">
+                            <h4>세션수</h4>
+                            <div class="ga4-metric-value" id="sessions">-</div>
+                            <div class="ga4-metric-change" id="sessionsChange">-</div>
+                        </div>
+                    </div>
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">📄</div>
+                        <div class="ga4-metric-content">
+                            <h4>조회수</h4>
+                            <div class="ga4-metric-value" id="screenPageViews">-</div>
+                            <div class="ga4-metric-change" id="screenPageViewsChange">-</div>
+                        </div>
+                    </div>
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">⚠️</div>
+                        <div class="ga4-metric-content">
+                            <h4>이탈률</h4>
+                            <div class="ga4-metric-value" id="bounceRate">-</div>
+                            <div class="ga4-metric-change" id="bounceRateChange">-</div>
+                        </div>
+                    </div>
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">📄</div>
+                        <div class="ga4-metric-content">
+                            <h4>세션당 페이지뷰</h4>
+                            <div class="ga4-metric-value" id="screenPageViewsPerSession">-</div>
+                            <div class="ga4-metric-change" id="screenPageViewsPerSessionChange">-</div>
+                        </div>
+                    </div>
+                    <div class="ga4-metric-card">
+                        <div class="ga4-metric-icon">⏱️</div>
+                        <div class="ga4-metric-content">
+                            <h4>평균 세션 시간</h4>
+                            <div class="ga4-metric-value" id="averageSessionDuration">-</div>
+                            <div class="ga4-metric-change" id="averageSessionDurationChange">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 차트 섹션 -->
+                <div class="ga4-chart-container">
+                    <h4>📅 일별 사용자 및 세션 추이</h4>
+                    <div class="ga4-chart-wrapper">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 디바이스 및 브라우저 분석 섹션 -->
+                <div class="ga4-analysis-row">
+                    <div class="ga4-chart-container ga4-chart-half">
+                        <h4>📱 디바이스별 분석</h4>
+                        <div class="ga4-chart-wrapper">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="ga4-chart-container ga4-chart-half">
+                        <h4>🌐 브라우저 분석</h4>
+                        <div class="ga4-table-wrapper">
+                            <table class="ga4-browser-table" id="browserTable">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th>브라우저</th>
+                                        <th>세션</th>
+                                        <th>점유율</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="browserTableBody">
+                                    <!-- 데이터가 여기에 동적으로 추가됩니다 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 유입 채널 분석 -->
+                <div class="ga4-chart-container">
+                    <h4>🌐 유입 채널 분석</h4>
+                    <div class="ga4-chart-wrapper">
+                        <canvas id="channelChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 주요 이벤트 분석 -->
+                <div class="ga4-chart-container">
+                    <h4>🎯 주요 이벤트 분석</h4>
+                    <div class="ga4-table-wrapper">
+                        <table class="ga4-event-table" id="eventTable">
+                                <thead>
+                                    <tr>
+                                        <th>순위</th>
+                                        <th>이벤트명</th>
+                                        <th>발생횟수</th>
+                                        <th>비고</th>
+                                    </tr>
+                                </thead>
+                            <tbody id="eventTableBody">
+                                <!-- 데이터가 여기에 동적으로 추가됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 인기 페이지 TOP 10 -->
+                <div class="ga4-chart-container">
+                    <h4>🔥 인기 페이지 TOP 10</h4>
+                    <div class="ga4-table-wrapper">
+                        <table class="ga4-top-pages-table" id="topPagesTable">
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>페이지 경로</th>
+                                    <th>페이지뷰</th>
+                                    <th>비율</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topPagesTableBody">
+                                <!-- 데이터가 여기에 동적으로 추가됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 지역별 사용자 분포 -->
+                <div class="ga4-chart-container">
+                    <h4>🌍 지역별 사용자 분포</h4>
+                    <div class="ga4-table-wrapper">
+                        <table class="ga4-geo-table" id="geoTable">
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>국가</th>
+                                    <th>사용자 수</th>
+                                    <th>비율</th>
+                                </tr>
+                            </thead>
+                            <tbody id="geoTableBody">
+                                <!-- 데이터가 여기에 동적으로 추가됩니다 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 종합 분석 및 권장사항 -->
+                <div class="ga4-insights-container">
+                    <h4>💡 종합 분석 및 권장사항</h4>
+                    <div class="ga4-insights-content" id="insightsContent">
+                        <div class="ga4-insight-section">
+                            <h5>📈 강점</h5>
+                            <ul id="strengthsList">
+                                <li>데이터를 분석 중입니다...</li>
+                            </ul>
+                        </div>
+                        <div class="ga4-insight-section">
+                            <h5>⚠️ 개선 필요 영역</h5>
+                            <ul id="improvementsList">
+                                <li>데이터를 분석 중입니다...</li>
+                            </ul>
+                        </div>
+                        <div class="ga4-insight-section">
+                            <h5>💡 실행 권장사항</h5>
+                            <ul id="recommendationsList">
+                                <li>데이터를 분석 중입니다...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GA4 Dashboard JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+// GA4 Dashboard JavaScript
+(function() {
+    // 전역 변수
+    let gapi_loaded = false;
+    let gsi_loaded = false;
+    let accessToken = null;
+    let selectedPropertyId = null;
+    let currentUser = null;
+    let currentDateRange = {
+        startDate: '7daysAgo',
+        endDate: 'today'
+    };
+    let previousPeriodData = null;
+    
+    // 고정된 Client ID
+    const CLIENT_ID = '655746397306-gtbrlf06a89uqd0sm01lj2lg8ecvfpmp.apps.googleusercontent.com';
+    const SCOPES = 'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/analytics.readonly';
+
+    // 상태 업데이트 함수
+    function updateStatus(message, isSuccess = false) {
+        const statusEl = document.getElementById('apiStatus');
+        if (statusEl) {
+            statusEl.textContent = message;
+            if (isSuccess) {
+                statusEl.style.background = '#d4edda';
+                statusEl.style.borderColor = '#c3e6cb';
+                statusEl.style.color = '#155724';
+            }
+        }
+    }
+
+    // 날짜 범위 설정 함수들
+    window.setQuickDateRange = function(period) {
+        const today = new Date();
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        
+        let days;
+        switch(period) {
+            case '7days':
+                days = 7;
+                break;
+            case '30days':
+                days = 30;
+                break;
+            case '90days':
+                days = 90;
+                break;
+            default:
+                days = 7;
+        }
+        
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - days);
+        
+        if (startDateInput) startDateInput.value = startDate.toISOString().split('T')[0];
+        if (endDateInput) endDateInput.value = today.toISOString().split('T')[0];
+        
+        updateDateRange();
+    };
+
+    window.updateDateRange = function() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        
+        if (startDateInput && endDateInput && startDateInput.value && endDateInput.value) {
+            currentDateRange.startDate = startDateInput.value;
+            currentDateRange.endDate = endDateInput.value;
+        }
+    };
+
+    // 초기 날짜 설정
+    function initializeDateRange() {
+        setQuickDateRange('7days');
+    }
+
+    // Google API 로드 함수들
+    window.ga4GapiLoaded = function() {
+        console.log('Google API 로드 완료');
+        gapi_loaded = true;
+        updateStatus('Google API 로드 완료 ✅');
+        checkAllApisLoaded();
+    };
+
+    window.ga4GsiLoaded = function() {
+        console.log('Google Sign-In 로드 완료');
+        gsi_loaded = true;
+        updateStatus('Google Sign-In 로드 완료 ✅');
+        checkAllApisLoaded();
+    };
+
+    function checkAllApisLoaded() {
+        if (gapi_loaded && gsi_loaded) {
+            updateStatus('모든 API 로드 완료! Google로 로그인하세요 🎉', true);
+            const loginBtn = document.getElementById('googleLoginBtn');
+            const loginText = document.getElementById('loginBtnText');
+            if (loginBtn && loginText) {
+                loginBtn.disabled = false;
+                loginText.textContent = 'Google로 로그인';
+            }
+        }
+    }
+
+    // 구글 로그인 처리
+    window.handleGoogleLogin = function() {
+        if (!gsi_loaded) {
+            showError('Google Sign-In이 아직 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+
+        try {
+            console.log('OAuth 초기화 시도...');
+            
+            const client = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: handleAuthResponse,
+                error_callback: (error) => {
+                    console.error('OAuth Error:', error);
+                    showError(`로그인 오류: ${error.type || error.message || '알 수 없는 오류'}`);
+                }
+            });
+            
+            console.log('토큰 요청...');
+            client.requestAccessToken({
+                prompt: 'consent',
+            });
+            
+        } catch (error) {
+            showError('로그인 중 오류가 발생했습니다: ' + error.message);
+            console.error('Login error:', error);
+        }
+    };
+
+    // 인증 응답 처리
+    function handleAuthResponse(response) {
+        console.log('Auth response:', response);
+        
+        if (response.error) {
+            showError('로그인 실패: ' + response.error);
+            return;
+        }
+
+        accessToken = response.access_token;
+        console.log('액세스 토큰 획득 완료');
+        
+        getUserInfo();
+    }
+
+    // 사용자 정보 가져오기
+    async function getUserInfo() {
+        try {
+            console.log('사용자 정보 요청...');
+            const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            
+            const userInfo = await response.json();
+            console.log('사용자 정보:', userInfo);
+            
+            if (response.ok) {
+                displayUserInfo(userInfo);
+                loadAccounts();
+                
+                // UI 상태 변경
+                const authSection = document.getElementById('authSection');
+                const accountSelector = document.getElementById('accountSelector');
+                if (authSection) authSection.style.display = 'none';
+                if (accountSelector) accountSelector.style.display = 'block';
+            } else {
+                throw new Error('사용자 정보 가져오기 실패');
+            }
+        } catch (error) {
+            console.error('User info error:', error);
+            showError('사용자 정보를 가져오는 중 오류가 발생했습니다: ' + error.message);
+        }
+    }
+
+    // 사용자 정보 표시
+    function displayUserInfo(userInfo) {
+        currentUser = userInfo;
+        
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const userInfo_div = document.getElementById('userInfo');
+        
+        if (userAvatar) userAvatar.src = userInfo.picture || '';
+        if (userName) userName.textContent = userInfo.name || '사용자';
+        if (userEmail) userEmail.textContent = userInfo.email || '';
+        if (userInfo_div) userInfo_div.style.display = 'flex';
+    }
+
+    // GA4 계정 목록 로드
+    async function loadAccounts() {
+        try {
+            console.log('GA4 계정 목록 요청...');
+            const response = await fetch('https://analyticsadmin.googleapis.com/v1beta/accounts', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            
+            const data = await response.json();
+            console.log('계정 데이터:', data);
+            
+            if (response.ok && data.accounts) {
+                populateAccountSelect(data.accounts);
+            } else {
+                throw new Error(data.error?.message || 'GA4 계정 로드 실패');
+            }
+        } catch (error) {
+            console.error('Load accounts error:', error);
+            showError('GA4 계정을 불러오는 중 오류가 발생했습니다: ' + error.message);
+        }
+    }
+
+    // 계정 선택 박스 채우기
+    function populateAccountSelect(accounts) {
+        const accountSelect = document.getElementById('accountSelect');
+        if (!accountSelect) return;
+        
+        accountSelect.innerHTML = '<option value="">계정을 선택하세요</option>';
+        
+        accounts.forEach(account => {
+            const option = document.createElement('option');
+            option.value = account.name;
+            option.textContent = account.displayName || account.name;
+            accountSelect.appendChild(option);
+        });
+        
+        console.log(`${accounts.length}개 계정 로드됨`);
+    }
+
+    // 속성 목록 로드
+    window.loadProperties = async function() {
+        const accountResourceName = document.getElementById('accountSelect').value;
+        const propertySelect = document.getElementById('propertySelect');
+        const loadReportBtn = document.getElementById('loadReportBtn');
+        
+        if (propertySelect) {
+            propertySelect.innerHTML = '<option value="">속성을 선택하세요</option>';
+        }
+        if (loadReportBtn) {
+            loadReportBtn.disabled = true;
+        }
+        
+        if (!accountResourceName) return;
+        
+        try {
+            console.log('속성 목록 요청:', accountResourceName);
+            const encodedFilter = encodeURIComponent(`parent:${accountResourceName}`);
+            const url = `https://analyticsadmin.googleapis.com/v1beta/properties?filter=${encodedFilter}&pageSize=200`;
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            
+            const data = await response.json();
+            console.log('속성 데이터:', data);
+            
+            if (response.ok && data.properties) {
+                data.properties.forEach(property => {
+                    const option = document.createElement('option');
+                    option.value = property.name.split('/')[1];
+                    option.textContent = property.displayName || property.name;
+                    if (propertySelect) propertySelect.appendChild(option);
+                });
+                console.log(`${data.properties.length}개 속성 로드됨`);
+            } else {
+                throw new Error(data.error?.message || '속성 로드 실패');
+            }
+        } catch (error) {
+            console.error('Load properties error:', error);
+            showError('GA4 속성을 불러오는 중 오류가 발생했습니다: ' + error.message);
+        }
+    };
+
+    // 리포트 버튼 활성화
+    window.enableReportButton = function() {
+        const propertySelect = document.getElementById('propertySelect');
+        const loadReportBtn = document.getElementById('loadReportBtn');
+        
+        if (propertySelect && loadReportBtn) {
+            const propertyId = propertySelect.value;
+            loadReportBtn.disabled = !propertyId;
+            selectedPropertyId = propertyId;
+            console.log('선택된 속성 ID:', selectedPropertyId);
+        }
+    };
+
+    // 리포트 로드
+    window.loadReport = async function() {
+        if (!selectedPropertyId) return;
+        
+        console.log('리포트 로드 시작:', selectedPropertyId);
+        const dashboard = document.getElementById('dashboard');
+        const loading = document.getElementById('loading');
+        const reportContent = document.getElementById('reportContent');
+        
+        if (dashboard) dashboard.style.display = 'block';
+        if (loading) loading.style.display = 'block';
+        if (reportContent) reportContent.style.display = 'none';
+        
+        // 스크롤을 대시보드로 이동
+        if (dashboard) {
+            dashboard.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        try {
+            await fetchGA4Data();
+            
+            if (loading) loading.style.display = 'none';
+            if (reportContent) reportContent.style.display = 'block';
+        } catch (error) {
+            console.error('리포트 로드 오류:', error);
+            if (loading) loading.style.display = 'none';
+            showError('리포트 데이터를 불러오는 중 오류가 발생했습니다: ' + error.message);
+        }
+    };
+
+    // GA4 데이터 가져오기
+    async function fetchGA4Data() {
+        console.log('GA4 데이터 요청 시작...', currentDateRange);
+        
+        try {
+            // 이전 기간 데이터 계산 (비교용)
+            const previousPeriod = calculatePreviousPeriod();
+            
+            // 기본 지표 데이터 요청
+            const metricsResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    metrics: [
+                        { name: 'totalUsers' },
+                        { name: 'newUsers' },
+                        { name: 'sessions' },
+                        { name: 'engagedSessions' },
+                        { name: 'engagementRate' },
+                        { name: 'bounceRate' },
+                        { name: 'screenPageViews' },
+                        { name: 'averageSessionDuration' }
+                    ]
+                })
+            });
+            
+            const metricsData = await metricsResponse.json();
+            
+            if (!metricsResponse.ok) {
+                throw new Error(metricsData.error?.message || '지표 데이터 로드 실패');
+            }
+            
+            // 이전 기간 데이터 요청 (비교용)
+            const previousMetricsResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: previousPeriod.startDate,
+                        endDate: previousPeriod.endDate
+                    }],
+                    metrics: [
+                        { name: 'totalUsers' },
+                        { name: 'newUsers' },
+                        { name: 'sessions' },
+                        { name: 'engagedSessions' },
+                        { name: 'engagementRate' },
+                        { name: 'bounceRate' },
+                        { name: 'screenPageViews' },
+                        { name: 'averageSessionDuration' }
+                    ]
+                })
+            });
+            
+            const previousMetricsData = await previousMetricsResponse.json();
+            
+            // 일별 추이 데이터 요청
+            const trendResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'date' }],
+                    metrics: [
+                        { name: 'totalUsers' },
+                        { name: 'sessions' }
+                    ]
+                })
+            });
+            
+            const trendData = await trendResponse.json();
+            
+            if (!trendResponse.ok) {
+                throw new Error(trendData.error?.message || '추이 데이터 로드 실패');
+            }
+            
+            // 디바이스별 데이터 요청
+            const deviceResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'deviceCategory' }],
+                    metrics: [{ name: 'totalUsers' }, { name: 'sessions' }]
+                })
+            });
+            
+            const deviceData = await deviceResponse.json();
+            
+            if (!deviceResponse.ok) {
+                throw new Error(deviceData.error?.message || '디바이스 데이터 로드 실패');
+            }
+            
+            // 브라우저별 데이터 요청
+            const browserResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'browser' }],
+                    metrics: [{ name: 'totalUsers' }, { name: 'sessions' }],
+                    orderBys: [{ metric: { metricName: 'totalUsers' }, desc: true }],
+                    limit: 10
+                })
+            });
+            
+            const browserData = await browserResponse.json();
+            
+            if (!browserResponse.ok) {
+                throw new Error(browserData.error?.message || '브라우저 데이터 로드 실패');
+            }
+            
+            // 유입 채널 데이터 요청
+            const channelResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'sessionDefaultChannelGroup' }],
+                    metrics: [{ name: 'sessions' }, { name: 'totalUsers' }],
+                    orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+                    limit: 10
+                })
+            });
+            
+            const channelData = await channelResponse.json();
+            
+            if (!channelResponse.ok) {
+                throw new Error(channelData.error?.message || '채널 데이터 로드 실패');
+            }
+            
+            // 주요 이벤트 데이터 요청
+            const eventResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'eventName' }],
+                    metrics: [{ name: 'eventCount' }],
+                    orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+                    limit: 10
+                })
+            });
+            
+            const eventData = await eventResponse.json();
+            
+            if (!eventResponse.ok) {
+                throw new Error(eventData.error?.message || '이벤트 데이터 로드 실패');
+            }
+            
+            // 인기 페이지 데이터 요청
+            const pagesResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'pagePath' }],
+                    metrics: [{ name: 'screenPageViews' }],
+                    orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+                    limit: 10
+                })
+            });
+            
+            const pagesData = await pagesResponse.json();
+            
+            if (!pagesResponse.ok) {
+                throw new Error(pagesData.error?.message || '페이지 데이터 로드 실패');
+            }
+            
+            // 지역별 데이터 요청
+            const geoResponse = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${selectedPropertyId}:runReport`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dateRanges: [{
+                        startDate: currentDateRange.startDate,
+                        endDate: currentDateRange.endDate
+                    }],
+                    dimensions: [{ name: 'country' }],
+                    metrics: [{ name: 'totalUsers' }, { name: 'sessions' }],
+                    orderBys: [{ metric: { metricName: 'totalUsers' }, desc: true }],
+                    limit: 10
+                })
+            });
+            
+            const geoData = await geoResponse.json();
+            
+            if (!geoResponse.ok) {
+                throw new Error(geoData.error?.message || '지역 데이터 로드 실패');
+            }
+            
+            displayReportData(metricsData, previousMetricsData, trendData, deviceData, browserData, channelData, eventData, pagesData, geoData);
+            
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // 이전 기간 계산 함수
+    function calculatePreviousPeriod() {
+        const startDate = new Date(currentDateRange.startDate);
+        const endDate = new Date(currentDateRange.endDate);
+        const periodLength = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        
+        const previousEndDate = new Date(startDate);
+        previousEndDate.setDate(previousEndDate.getDate() - 1);
+        
+        const previousStartDate = new Date(previousEndDate);
+        previousStartDate.setDate(previousStartDate.getDate() - periodLength + 1);
+        
+        return {
+            startDate: previousStartDate.toISOString().split('T')[0],
+            endDate: previousEndDate.toISOString().split('T')[0]
+        };
+    }
+
+    // 리포트 데이터 표시
+    function displayReportData(metricsData, previousMetricsData, trendData, deviceData, browserData, channelData, eventData, pagesData, geoData) {
+        try {
+            console.log('리포트 데이터 표시 시작');
+            
+            // 마지막 업데이트 시간 표시
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            if (lastUpdatedEl) {
+                lastUpdatedEl.textContent = `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
+            }
+            
+            // 주요 지표 업데이트
+            if (metricsData.rows && metricsData.rows.length > 0) {
+                const metrics = metricsData.rows[0].metricValues;
+                const previousMetrics = previousMetricsData.rows && previousMetricsData.rows.length > 0 ? 
+                    previousMetricsData.rows[0].metricValues : null;
+                
+                // 디버깅을 위한 로그 출력
+                console.log('GA4 Metrics Data:', {
+                    totalUsers: metrics[0].value,
+                    newUsers: metrics[1].value,
+                    sessions: metrics[2].value,
+                    engagementRate: metrics[3].value,
+                    bounceRate: metrics[4].value,
+                    screenPageViewsPerSession: metrics[5].value,
+                    averageSessionDuration: metrics[6].value
+                });
+                
+                updateMetricCard('totalUsers', parseInt(metrics[0].value || 0), previousMetrics ? parseInt(previousMetrics[0].value || 0) : null);
+                updateMetricCard('newUsers', parseInt(metrics[1].value || 0), previousMetrics ? parseInt(previousMetrics[1].value || 0) : null);
+                updateMetricCard('sessions', parseInt(metrics[2].value || 0), previousMetrics ? parseInt(previousMetrics[2].value || 0) : null);
+                // screenPageViews 처리 (조회수)
+                const screenPageViews = parseInt(metrics[6].value || 0);
+                const prevScreenPageViews = previousMetrics ? parseInt(previousMetrics[6].value || 0) : null;
+                
+                updateMetricCard('screenPageViews', screenPageViews, prevScreenPageViews);
+                updateMetricCard('bounceRate', Math.round(parseFloat(metrics[4].value || 0) * 100), previousMetrics ? Math.round(parseFloat(previousMetrics[4].value || 0) * 100) : null, '%');
+                // screenPageViewsPerSession 계산 (screenPageViews / sessions)
+                const totalPageViews = parseFloat(metrics[6].value || 0);
+                const totalSessions = parseFloat(metrics[2].value || 0);
+                const pageViewsPerSession = totalSessions > 0 ? totalPageViews / totalSessions : 0;
+                
+                const prevTotalPageViews = previousMetrics ? parseFloat(previousMetrics[6].value || 0) : null;
+                const prevTotalSessions = previousMetrics ? parseFloat(previousMetrics[2].value || 0) : null;
+                const prevPageViewsPerSession = (prevTotalSessions && prevTotalSessions > 0) ? prevTotalPageViews / prevTotalSessions : null;
+                
+                console.log('PageViews per Session Calculation:', {
+                    totalPageViews: totalPageViews,
+                    totalSessions: totalSessions,
+                    calculated: pageViewsPerSession,
+                    previous: prevPageViewsPerSession
+                });
+                
+                updateMetricCard('screenPageViewsPerSession', pageViewsPerSession.toFixed(2), prevPageViewsPerSession, '');
+                
+                // averageSessionDuration 처리
+                const avgSessionDuration = parseFloat(metrics[7].value || 0);
+                const prevAvgSessionDuration = previousMetrics ? parseFloat(previousMetrics[7].value || 0) : null;
+                
+                console.log('Average Session Duration:', {
+                    current: avgSessionDuration,
+                    previous: prevAvgSessionDuration,
+                    rawValue: metrics[7].value,
+                    formatted: formatDuration(avgSessionDuration)
+                });
+                
+                updateMetricCard('averageSessionDuration', formatDuration(avgSessionDuration), prevAvgSessionDuration ? formatDuration(prevAvgSessionDuration) : null);
+            } else {
+                // 데이터가 없는 경우 0으로 표시
+                updateMetricCard('totalUsers', 0, null);
+                updateMetricCard('newUsers', 0, null);
+                updateMetricCard('sessions', 0, null);
+                updateMetricCard('screenPageViews', 0, null);
+                updateMetricCard('bounceRate', 0, null, '%');
+                updateMetricCard('screenPageViewsPerSession', '0.00', null);
+                updateMetricCard('averageSessionDuration', '0분 0초', null);
+            }
+            
+            // 차트 생성
+            createTrendChart(trendData);
+            createDeviceChart(deviceData);
+            createBrowserTable(browserData);
+            createChannelChart(channelData);
+            createEventTable(eventData);
+            createTopPagesTable(pagesData);
+            createGeoTable(geoData);
+            generateInsights(metricsData, deviceData, channelData);
+            
+            console.log('리포트 데이터 표시 완료');
+            
+        } catch (error) {
+            console.error('데이터 표시 중 오류:', error);
+            showError('데이터를 표시하는 중 오류가 발생했습니다.');
+        }
+    }
+
+    // 지표 카드 업데이트 함수
+    function updateMetricCard(metricId, currentValue, previousValue, suffix = '') {
+        const valueEl = document.getElementById(metricId);
+        const changeEl = document.getElementById(metricId + 'Change');
+        
+        if (valueEl) {
+            if (typeof currentValue === 'number') {
+                valueEl.textContent = currentValue.toLocaleString() + suffix;
+            } else {
+                valueEl.textContent = currentValue + suffix;
+            }
+        }
+        
+        if (changeEl && previousValue !== null) {
+            // 평균 세션 시간의 경우 특별 처리
+            if (metricId === 'averageSessionDuration') {
+                const currentSeconds = parseDurationToSeconds(currentValue);
+                const previousSeconds = parseDurationToSeconds(previousValue);
+                
+                if (previousSeconds > 0) {
+                    const changePercent = ((currentSeconds - previousSeconds) / previousSeconds) * 100;
+                    const changeText = changePercent > 0 ? `+${changePercent.toFixed(1)}%` : `${changePercent.toFixed(1)}%`;
+                    changeEl.textContent = changeText;
+                    changeEl.className = `ga4-metric-change ${changePercent >= 0 ? 'positive' : 'negative'}`;
+                } else {
+                    changeEl.textContent = '-';
+                    changeEl.className = 'ga4-metric-change';
+                }
+            } else if (typeof currentValue === 'number' && typeof previousValue === 'number' && previousValue !== 0) {
+                const changePercent = ((currentValue - previousValue) / previousValue) * 100;
+                const changeText = changePercent > 0 ? `+${changePercent.toFixed(1)}%` : `${changePercent.toFixed(1)}%`;
+                changeEl.textContent = changeText;
+                changeEl.className = `ga4-metric-change ${changePercent >= 0 ? 'positive' : 'negative'}`;
+            } else if (typeof currentValue === 'string' && typeof previousValue === 'number' && previousValue !== 0) {
+                // 문자열 값(예: "0.53")과 숫자 값 비교
+                const currentNum = parseFloat(currentValue);
+                if (!isNaN(currentNum)) {
+                    const changePercent = ((currentNum - previousValue) / previousValue) * 100;
+                    const changeText = changePercent > 0 ? `+${changePercent.toFixed(1)}%` : `${changePercent.toFixed(1)}%`;
+                    changeEl.textContent = changeText;
+                    changeEl.className = `ga4-metric-change ${changePercent >= 0 ? 'positive' : 'negative'}`;
+                } else {
+                    changeEl.textContent = '-';
+                    changeEl.className = 'ga4-metric-change';
+                }
+            } else {
+                changeEl.textContent = '-';
+                changeEl.className = 'ga4-metric-change';
+            }
+        } else if (changeEl) {
+            changeEl.textContent = '-';
+            changeEl.className = 'ga4-metric-change';
+        }
+    }
+
+    // 시간 형식을 초 단위로 변환하는 함수
+    function parseDurationToSeconds(durationStr) {
+        if (typeof durationStr === 'string' && durationStr.includes('분')) {
+            const parts = durationStr.split('분');
+            const minutes = parseInt(parts[0]) || 0;
+            const seconds = parseInt(parts[1].replace('초', '')) || 0;
+            return minutes * 60 + seconds;
+        }
+        return 0;
+    }
+
+    // 시간 포맷 함수
+    function formatDuration(seconds) {
+        if (isNaN(seconds) || seconds === null || seconds === undefined) {
+            return '0분 0초';
+        }
+        
+        const totalSeconds = Math.floor(parseFloat(seconds));
+        const minutes = Math.floor(totalSeconds / 60);
+        const remainingSeconds = totalSeconds % 60;
+        
+        // 0초인 경우에도 최소 1초로 표시
+        if (totalSeconds === 0) {
+            return '0분 1초';
+        }
+        
+        return `${minutes}분 ${remainingSeconds}초`;
+    }
+
+    // 일별 추이 차트 생성 (사용자 + 세션)
+    function createTrendChart(trendData) {
+        const ctx = document.getElementById('trendChart');
+        if (!ctx) return;
+        
+        // 기존 차트가 있다면 제거
+        if (window.ga4TrendChartInstance) {
+            window.ga4TrendChartInstance.destroy();
+        }
+        
+        let chartData = [];
+        
+        if (trendData.rows && trendData.rows.length > 0) {
+            chartData = trendData.rows.map(row => ({
+                date: row.dimensionValues[0].value,
+                users: parseInt(row.metricValues[0].value || 0),
+                sessions: parseInt(row.metricValues[1].value || 0)
+            }));
+            
+            // 날짜 순으로 정렬
+            chartData.sort((a, b) => {
+                const dateA = new Date(a.date.length === 8 ? 
+                    `${a.date.substring(0,4)}-${a.date.substring(4,6)}-${a.date.substring(6,8)}` : a.date);
+                const dateB = new Date(b.date.length === 8 ? 
+                    `${b.date.substring(0,4)}-${b.date.substring(4,6)}-${b.date.substring(6,8)}` : b.date);
+                return dateA - dateB;
+            });
+        } else {
+            // 기본 데이터
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                chartData.push({
+                    date: date.toISOString().split('T')[0],
+                    users: 0,
+                    sessions: 0
+                });
+            }
+        }
+        
+        window.ga4TrendChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: chartData.map(item => {
+                    // GA4 API에서 받은 날짜 형식 처리 (YYYYMMDD 또는 YYYY-MM-DD)
+                    let dateStr = item.date;
+                    if (dateStr.length === 8) {
+                        // YYYYMMDD 형식인 경우
+                        const year = dateStr.substring(0, 4);
+                        const month = dateStr.substring(4, 6);
+                        const day = dateStr.substring(6, 8);
+                        return `${parseInt(month)}/${parseInt(day)}`;
+                    } else {
+                        // YYYY-MM-DD 형식인 경우
+                        const date = new Date(dateStr);
+                        return (date.getMonth() + 1) + '/' + date.getDate();
+                    }
+                }),
+                datasets: [{
+                    label: '사용자',
+                    data: chartData.map(item => item.users),
+                    borderColor: '#4285f4',
+                    backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#4285f4',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }, {
+                    label: '세션',
+                    data: chartData.map(item => item.sessions),
+                    borderColor: '#34a853',
+                    backgroundColor: 'rgba(52, 168, 83, 0.1)',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#34a853',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        hoverRadius: 8
+                    }
+                }
+            }
+        });
+    }
+
+    // 디바이스별 차트 생성
+    function createDeviceChart(deviceData) {
+        const ctx = document.getElementById('deviceChart');
+        if (!ctx) return;
+        
+        // 기존 차트가 있다면 제거
+        if (window.ga4DeviceChartInstance) {
+            window.ga4DeviceChartInstance.destroy();
+        }
+        
+        let chartData = [];
+        
+        if (deviceData.rows && deviceData.rows.length > 0) {
+            chartData = deviceData.rows.map(row => ({
+                device: row.dimensionValues[0].value,
+                users: parseInt(row.metricValues[0].value || 0),
+                sessions: parseInt(row.metricValues[1].value || 0)
+            }));
+        } else {
+            // 기본 데이터
+            chartData = [
+                { device: 'desktop', users: 0, sessions: 0 },
+                { device: 'mobile', users: 0, sessions: 0 },
+                { device: 'tablet', users: 0, sessions: 0 }
+            ];
+        }
+        
+        // 디바이스명 한국어로 변환
+        const deviceNames = {
+            'desktop': '데스크톱',
+            'mobile': '모바일',
+            'tablet': '태블릿'
+        };
+        
+        // 총 사용자 수 계산
+        const totalUsers = chartData.reduce((sum, item) => sum + item.users, 0);
+        
+        window.ga4DeviceChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: chartData.map(item => {
+                    const percentage = totalUsers > 0 ? ((item.users / totalUsers) * 100).toFixed(1) : 0;
+                    return `${deviceNames[item.device] || item.device} (${percentage}%)`;
+                }),
+                datasets: [{
+                    data: chartData.map(item => item.users),
+                    backgroundColor: ['#4285f4', '#34a853', '#fbbc05'],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const percentage = totalUsers > 0 ? ((value / totalUsers) * 100).toFixed(1) : 0;
+                                return `${label}: ${value.toLocaleString()}명 (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 브라우저별 테이블 생성
+    function createBrowserTable(browserData) {
+        const tbody = document.getElementById('browserTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        if (browserData.rows && browserData.rows.length > 0) {
+            const totalSessions = browserData.rows.reduce((sum, row) => sum + parseInt(row.metricValues[1].value || 0), 0);
+            
+            browserData.rows.forEach((row, index) => {
+                const browser = row.dimensionValues[0].value;
+                const sessions = parseInt(row.metricValues[1].value || 0);
+                const percentage = totalSessions > 0 ? ((sessions / totalSessions) * 100).toFixed(1) : 0;
+                
+                // 브라우저명 정리
+                const browserNames = {
+                    'Chrome': 'Chrome',
+                    'Safari': 'Safari',
+                    'Firefox': 'Firefox',
+                    'Microsoft Edge': 'Edge',
+                    'Edge': 'Edge',
+                    'Internet Explorer': 'IE',
+                    'Opera': 'Opera',
+                    'Samsung Internet': 'Samsung',
+                    'Whale Browser': 'Whale Browser',
+                    'Other': '기타'
+                };
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${browserNames[browser] || browser}</td>
+                    <td>${sessions.toLocaleString()}</td>
+                    <td>${percentage}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="4" style="text-align: center; color: #666;">데이터가 없습니다</td>';
+            tbody.appendChild(tr);
+        }
+    }
+
+    // 유입 채널 차트 생성
+    function createChannelChart(channelData) {
+        const ctx = document.getElementById('channelChart');
+        if (!ctx) return;
+        
+        // 기존 차트가 있다면 제거
+        if (window.ga4ChannelChartInstance) {
+            window.ga4ChannelChartInstance.destroy();
+        }
+        
+        let chartData = [];
+        
+        if (channelData.rows && channelData.rows.length > 0) {
+            chartData = channelData.rows.map(row => ({
+                channel: row.dimensionValues[0].value,
+                sessions: parseInt(row.metricValues[0].value || 0),
+                users: parseInt(row.metricValues[1].value || 0)
+            }));
+        } else {
+            // 기본 데이터
+            chartData = [
+                { channel: 'Organic Search', sessions: 0, users: 0 },
+                { channel: 'Direct', sessions: 0, users: 0 },
+                { channel: 'Referral', sessions: 0, users: 0 }
+            ];
+        }
+        
+        // 채널명 한국어로 변환
+        const channelNames = {
+            'Organic Search': '자연 검색',
+            'Direct': '직접 유입',
+            'Referral': '추천',
+            'Organic Social': '자연 소셜',
+            'Paid Social': '유료 소셜',
+            'Paid Search': '유료 검색',
+            'Email': '이메일',
+            'Display': '디스플레이',
+            'Other': '기타'
+        };
+        
+        window.ga4ChannelChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: chartData.map(item => channelNames[item.channel] || item.channel),
+                datasets: [{
+                    label: '세션 수',
+                    data: chartData.map(item => item.sessions),
+                    backgroundColor: '#4285f4',
+                    borderColor: '#4285f4',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 주요 이벤트 테이블 생성
+    function createEventTable(eventData) {
+        const tbody = document.getElementById('eventTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        if (eventData.rows && eventData.rows.length > 0) {
+            eventData.rows.forEach((row, index) => {
+                const eventName = row.dimensionValues[0].value;
+                const eventCount = parseInt(row.metricValues[0].value || 0);
+                
+                // 이벤트명 한국어로 변환
+                const eventNames = {
+                    'page_view': 'page_view',
+                    'scroll': 'scroll',
+                    'click': 'click',
+                    'session_start': 'session_start',
+                    'first_visit': 'first_visit',
+                    'user_engagement': 'user_engagement',
+                    'file_download': 'file_download',
+                    'video_start': 'video_start',
+                    'video_complete': 'video_complete',
+                    'form_start': 'form_start',
+                    'form_submit': 'form_submit',
+                    'purchase': 'purchase',
+                    'add_to_cart': 'add_to_cart',
+                    'view_item': 'view_item',
+                    'search': 'search',
+                    'login': 'login',
+                    'sign_up': 'sign_up'
+                };
+                
+                // 이벤트 카테고리 분류
+                const getEventCategory = (eventName) => {
+                    const basicEvents = ['page_view', 'session_start', 'first_visit', 'user_engagement'];
+                    const conversionEvents = ['purchase', 'add_to_cart', 'form_submit', 'sign_up', 'login'];
+                    
+                    if (basicEvents.includes(eventName)) {
+                        return { text: '기본 이벤트', class: 'basic-event' };
+                    } else if (conversionEvents.includes(eventName)) {
+                        return { text: '전환', class: 'conversion-event' };
+                    } else {
+                        return { text: '커스텀', class: 'custom-event' };
+                    }
+                };
+                
+                const category = getEventCategory(eventName);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td title="${eventNames[eventName] || eventName}">${eventNames[eventName] || eventName}</td>
+                    <td>${eventCount.toLocaleString()}</td>
+                    <td><span class="event-category-tag ${category.class}">${category.text}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="4" style="text-align: center; color: #666;">데이터가 없습니다</td>';
+            tbody.appendChild(tr);
+        }
+    }
+
+    // 인기 페이지 테이블 생성
+    function createTopPagesTable(pagesData) {
+        const tbody = document.getElementById('topPagesTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        if (pagesData.rows && pagesData.rows.length > 0) {
+            const totalPageViews = pagesData.rows.reduce((sum, row) => sum + parseInt(row.metricValues[0].value || 0), 0);
+            
+            pagesData.rows.forEach((row, index) => {
+                const pagePath = row.dimensionValues[0].value;
+                const pageViews = parseInt(row.metricValues[0].value || 0);
+                const percentage = totalPageViews > 0 ? ((pageViews / totalPageViews) * 100).toFixed(1) : 0;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td title="${pagePath}">${pagePath.length > 50 ? pagePath.substring(0, 50) + '...' : pagePath}</td>
+                    <td>${pageViews.toLocaleString()}</td>
+                    <td>${percentage}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="4" style="text-align: center; color: #666;">데이터가 없습니다</td>';
+            tbody.appendChild(tr);
+        }
+    }
+
+    // 지역별 테이블 생성
+    function createGeoTable(geoData) {
+        const tbody = document.getElementById('geoTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        if (geoData.rows && geoData.rows.length > 0) {
+            const totalUsers = geoData.rows.reduce((sum, row) => sum + parseInt(row.metricValues[0].value || 0), 0);
+            
+            geoData.rows.forEach((row, index) => {
+                const country = row.dimensionValues[0].value;
+                const users = parseInt(row.metricValues[0].value || 0);
+                const sessions = parseInt(row.metricValues[1].value || 0);
+                const percentage = totalUsers > 0 ? ((users / totalUsers) * 100).toFixed(1) : 0;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${country}</td>
+                    <td>${users.toLocaleString()}</td>
+                    <td>${percentage}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="4" style="text-align: center; color: #666;">데이터가 없습니다</td>';
+            tbody.appendChild(tr);
+        }
+    }
+
+    // 종합 분석 및 권장사항 생성
+    function generateInsights(metricsData, deviceData, channelData) {
+        const strengthsList = document.getElementById('strengthsList');
+        const improvementsList = document.getElementById('improvementsList');
+        const recommendationsList = document.getElementById('recommendationsList');
+        
+        if (!strengthsList || !improvementsList || !recommendationsList) return;
+        
+        const insights = analyzeData(metricsData, deviceData, channelData);
+        
+        strengthsList.innerHTML = insights.strengths.map(strength => `<li>${strength}</li>`).join('');
+        improvementsList.innerHTML = insights.improvements.map(improvement => `<li>${improvement}</li>`).join('');
+        recommendationsList.innerHTML = insights.recommendations.map(recommendation => `<li>${recommendation}</li>`).join('');
+    }
+
+    // 데이터 분석 함수
+    function analyzeData(metricsData, deviceData, channelData) {
+        const insights = {
+            strengths: [],
+            improvements: [],
+            recommendations: []
+        };
+        
+        if (!metricsData.rows || metricsData.rows.length === 0) {
+            insights.strengths.push('데이터를 분석할 수 없습니다');
+            insights.improvements.push('GA4 데이터가 필요합니다');
+            insights.recommendations.push('GA4 설정을 확인해주세요');
+            return insights;
+        }
+        
+        const metrics = metricsData.rows[0].metricValues;
+        const totalUsers = parseInt(metrics[0].value || 0);
+        const newUsers = parseInt(metrics[1].value || 0);
+        const sessions = parseInt(metrics[2].value || 0);
+        const screenPageViews = parseInt(metrics[6].value || 0);
+        const bounceRate = parseFloat(metrics[4].value || 0) * 100;
+        const avgSessionDuration = parseFloat(metrics[7].value || 0);
+        
+        // 강점 분석
+        if (screenPageViews > 1000) {
+            insights.strengths.push(`높은 조회수 (${screenPageViews.toLocaleString()}회) - 콘텐츠가 사용자들에게 관심을 받고 있습니다`);
+        }
+        if (bounceRate < 50) {
+            insights.strengths.push(`낮은 이탈률 (${bounceRate.toFixed(1)}%) - 사용자들이 여러 페이지를 탐색하고 있습니다`);
+        }
+        if (avgSessionDuration > 60) {
+            insights.strengths.push(`긴 평균 세션 시간 (${formatDuration(avgSessionDuration)}) - 사용자들이 충분한 시간을 투자하고 있습니다`);
+        }
+        
+        // 개선 필요 영역 분석
+        if (screenPageViews < 100) {
+            insights.improvements.push(`낮은 조회수 (${screenPageViews.toLocaleString()}회) - 콘텐츠 품질 개선이 필요합니다`);
+        }
+        if (bounceRate > 70) {
+            insights.improvements.push(`높은 이탈률 (${bounceRate.toFixed(1)}%) - 첫 페이지에서 사용자를 유지하는 전략이 필요합니다`);
+        }
+        if (avgSessionDuration < 30) {
+            insights.improvements.push(`짧은 평균 세션 시간 (${formatDuration(avgSessionDuration)}) - 사용자 경험 개선이 필요합니다`);
+        }
+        
+        // 권장사항
+        if (screenPageViews < 500) {
+            insights.recommendations.push('콘텐츠 품질을 높이고 사용자 참여를 유도하는 요소를 추가하세요');
+        }
+        if (bounceRate > 60) {
+            insights.recommendations.push('페이지 로딩 속도를 개선하고 첫 화면의 가치를 명확히 전달하세요');
+        }
+        if (totalUsers < 100) {
+            insights.recommendations.push('SEO 최적화와 마케팅 활동을 통해 트래픽을 늘리세요');
+        }
+        
+        // 기본 메시지가 없는 경우
+        if (insights.strengths.length === 0) {
+            insights.strengths.push('데이터 분석을 통해 강점을 파악하고 있습니다');
+        }
+        if (insights.improvements.length === 0) {
+            insights.improvements.push('현재 데이터로는 특별한 개선점이 보이지 않습니다');
+        }
+        if (insights.recommendations.length === 0) {
+            insights.recommendations.push('지속적인 모니터링을 통해 성과를 추적하세요');
+        }
+        
+        return insights;
+    }
+
+    // 로그아웃 처리
+    window.handleLogout = function() {
+        console.log('로그아웃 시작');
+        
+        // 토큰 및 사용자 정보 초기화
+        if (accessToken) {
+            try {
+                google.accounts.oauth2.revoke(accessToken, () => {
+                    console.log('토큰이 해제되었습니다.');
+                });
+            } catch (error) {
+                console.error('토큰 해제 중 오류:', error);
+            }
+        }
+        
+        accessToken = null;
+        currentUser = null;
+        selectedPropertyId = null;
+        
+        // 차트 인스턴스 제거
+        if (window.ga4TrendChartInstance) {
+            window.ga4TrendChartInstance.destroy();
+            window.ga4TrendChartInstance = null;
+        }
+        if (window.ga4DeviceChartInstance) {
+            window.ga4DeviceChartInstance.destroy();
+            window.ga4DeviceChartInstance = null;
+        }
+        if (window.ga4ChannelChartInstance) {
+            window.ga4ChannelChartInstance.destroy();
+            window.ga4ChannelChartInstance = null;
+        }
+        
+        // UI 초기화
+        const userInfo = document.getElementById('userInfo');
+        const accountSelector = document.getElementById('accountSelector');
+        const dashboard = document.getElementById('dashboard');
+        const authSection = document.getElementById('authSection');
+        const accountSelect = document.getElementById('accountSelect');
+        const propertySelect = document.getElementById('propertySelect');
+        const loadReportBtn = document.getElementById('loadReportBtn');
+        
+        if (userInfo) userInfo.style.display = 'none';
+        if (accountSelector) accountSelector.style.display = 'none';
+        if (dashboard) dashboard.style.display = 'none';
+        if (authSection) authSection.style.display = 'block';
+        
+        // 선택 박스 초기화
+        if (accountSelect) accountSelect.innerHTML = '<option value="">계정을 선택하세요</option>';
+        if (propertySelect) propertySelect.innerHTML = '<option value="">먼저 계정을 선택하세요</option>';
+        if (loadReportBtn) loadReportBtn.disabled = true;
+    };
+
+    // 에러 메시지 표시
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        if (errorDiv && message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            console.error('Error:', message);
+        } else if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+    }
+
+    // 초기화 함수
+    function initGA4Dashboard() {
+        console.log('GA4 Dashboard 초기화 시작');
+        updateStatus('Google API 로딩 중...');
+        
+        // 초기 날짜 범위 설정
+        initializeDateRange();
+        
+        // Google API 스크립트 동적 로드
+        const gapiScript = document.createElement('script');
+        gapiScript.src = 'https://apis.google.com/js/api.js';
+        gapiScript.onload = window.ga4GapiLoaded;
+        gapiScript.onerror = () => {
+            updateStatus('Google API 로드 실패');
+            showError('Google API를 로드할 수 없습니다. 네트워크 연결을 확인해주세요.');
+        };
+        document.head.appendChild(gapiScript);
+        
+        const gsiScript = document.createElement('script');
+        gsiScript.src = 'https://accounts.google.com/gsi/client';
+        gsiScript.onload = window.ga4GsiLoaded;
+        gsiScript.onerror = () => {
+            updateStatus('Google Sign-In 로드 실패');
+            showError('Google Sign-In을 로드할 수 없습니다. 네트워크 연결을 확인해주세요.');
+        };
+        document.head.appendChild(gsiScript);
+    }
+
+    // DOM이 로드되면 초기화
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGA4Dashboard);
+    } else {
+        initGA4Dashboard();
+    }
+
+})();
+</script>
+
+
+    <script src="js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            fetch('includes/header.html').then(r=>r.text()).then(h=>{ document.getElementById('header').innerHTML=h; });
+            fetch('includes/sidebar.html').then(r=>r.text()).then(s=>{ document.getElementById('sidebar').innerHTML=s; });
+            fetch('includes/footer.html').then(r=>r.text()).then(f=>{ document.getElementById('footer').innerHTML=f; });
+            fetch('includes/chatbot.html').then(r=>r.text()).then(b=>{ document.getElementById('chatbot').innerHTML=b; });
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,137 @@
+<div class="breadcrumb">
+    <a href="index.html">홈</a> > <a href="gtm-operation.html">Google Tag Manager</a> > GTM 운영 방법
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">GTM 운영 방법</h1>
+    <p class="page-description">태그 관리, 디버깅, 버전 관리 등 실무 운영 가이드</p>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">태그 관리</h2>
+    <div class="section-content">
+        <p>GTM에서 태그를 효율적으로 관리하는 방법입니다.</p>
+        
+        <h3>태그 생성</h3>
+        <ol>
+            <li>GTM 인터페이스에서 "태그" 메뉴 클릭</li>
+            <li>"새로 만들기" 버튼 클릭</li>
+            <li>태그 유형 선택 (GA4, Google Ads 등)</li>
+            <li>태그 설정 및 트리거 연결</li>
+        </ol>
+
+        <h3>주요 태그 유형</h3>
+        <ul>
+            <li><strong>Google Analytics 4:</strong> 웹사이트 분석</li>
+            <li><strong>Google Ads 전환:</strong> 광고 전환 추적</li>
+            <li><strong>Facebook Pixel:</strong> 소셜 미디어 광고</li>
+            <li><strong>사용자 정의 HTML:</strong> 커스텀 코드</li>
+        </ul>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">트리거 설정</h2>
+    <div class="section-content">
+        <p>태그가 실행될 조건을 정의하는 트리거 설정 방법입니다.</p>
+        
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">📄 페이지뷰</div>
+                <div class="card-content">
+                    특정 페이지 방문 시 태그 실행
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">🖱️ 클릭</div>
+                <div class="card-content">
+                    특정 요소 클릭 시 태그 실행
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">📝 폼 제출</div>
+                <div class="card-content">
+                    폼 제출 시 태그 실행
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">변수 활용</h2>
+    <div class="section-content">
+        <p>동적 데이터를 태그와 트리거에서 활용하는 변수 설정 방법입니다.</p>
+        
+        <h3>내장 변수</h3>
+        <ul>
+            <li><strong>Page URL:</strong> 현재 페이지 URL</li>
+            <li><strong>Click Text:</strong> 클릭된 요소의 텍스트</li>
+            <li><strong>Form ID:</strong> 폼의 ID</li>
+            <li><strong>Random Number:</strong> 랜덤 숫자</li>
+        </ul>
+
+        <h3>사용자 정의 변수</h3>
+        <div class="card">
+            <div class="card-title">💡 활용 예시</div>
+            <div class="card-content">
+                상품 ID, 사용자 등급, 페이지 카테고리 등을 변수로 설정하여 동적으로 태그에 전달할 수 있습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">디버깅</h2>
+    <div class="section-content">
+        <p>GTM의 미리보기 모드를 활용한 디버깅 방법입니다.</p>
+        
+        <h3>미리보기 모드</h3>
+        <ol>
+            <li>GTM 인터페이스에서 "미리보기" 버튼 클릭</li>
+            <li>웹사이트 URL 입력</li>
+            <li>실시간으로 태그 동작 확인</li>
+            <li>트리거 및 변수 값 검증</li>
+        </ol>
+
+        <div class="card">
+            <div class="card-title">🔍 디버깅 팁</div>
+            <div class="card-content">
+                미리보기 모드에서는 태그가 실행되는 순서, 트리거 조건, 변수 값을 실시간으로 확인할 수 있어 문제 해결이 쉽습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">버전 관리</h2>
+    <div class="section-content">
+        <p>GTM의 버전 관리 시스템을 활용한 안전한 운영 방법입니다.</p>
+        
+        <h3>버전 관리</h3>
+        <ul>
+            <li><strong>버전 생성:</strong> 변경사항을 버전으로 저장</li>
+            <li><strong>버전 비교:</strong> 이전 버전과 현재 버전 비교</li>
+            <li><strong>롤백:</strong> 문제 발생 시 이전 버전으로 복원</li>
+            <li><strong>버전 노트:</strong> 변경 내용 기록</li>
+        </ul>
+
+        <div class="card">
+            <div class="card-title">📝 운영 팁</div>
+            <div class="card-content">
+                중요한 변경 전에는 반드시 버전을 생성하고, 변경 내용을 상세히 기록하여 나중에 문제가 발생했을 때 쉽게 대응할 수 있습니다.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-section">
+    <h2 class="section-title">다음 단계</h2>
+    <div class="section-content">
+        <p>GTM 운영 방법을 익혔다면 다음 단계로 진행하세요:</p>
+        <div style="margin-top: 20px;">
+            <a href="gtm-datalayer.html" class="btn btn-primary">데이터 레이어</a>
+            <a href="ga-events.html" class="btn btn-secondary">이벤트 설정</a>
+        </div>
+    </div>
+</div>

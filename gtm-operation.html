@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTM 운영 방법 | KT nasmedia GA4 & GTM 가이드 센터</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body class="has-sidebar">
+    <div id="header"></div>
+    <div id="sidebar"></div>
+    <main class="main-content">
+        <div class="content-container"><div id="content"></div></div>
+    </main>
+    <div id="footer"></div>
+    <div id="chatbot"></div>
+    <script src="js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            fetch('includes/header.html').then(r=>r.text()).then(h=>{ document.getElementById('header').innerHTML=h; });
+            fetch('includes/sidebar.html').then(r=>r.text()).then(s=>{ document.getElementById('sidebar').innerHTML=s; });
+            fetch('content/gtm-operation-content.html').then(r=>r.text()).then(c=>{ document.getElementById('content').innerHTML=c; });
+            fetch('includes/footer.html').then(r=>r.text()).then(f=>{ document.getElementById('footer').innerHTML=f; });
+            fetch('includes/chatbot.html').then(r=>r.text()).then(b=>{ document.getElementById('chatbot').innerHTML=b; });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,28 @@
+<!-- Chatbot -->
+<div class="chatbot-container">
+    <button class="chatbot-toggle" onclick="toggleChatbot()">💬</button>
+    <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+            <div class="chatbot-title">GA4 & GTM 가이드 AI</div>
+            <button class="chatbot-close" onclick="toggleChatbot()">×</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    안녕하세요! GA4 & GTM 가이드 AI입니다.<br><br>무엇을 도와드릴까요?
+                    <div class="quick-actions" style="margin-top:8px;">
+                        <button class="quick-action-btn" onclick="sendQuickMessage('GA4 설치 방법')">GA4 설치</button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('GTM 설정')">GTM 설정</button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('이벤트 추적')">이벤트 추적</button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('전자상거래')">전자상거래</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbotInput" placeholder="질문을 입력하세요..." onkeypress="handleChatbotKeyPress(event)">
+            <button class="chatbot-send" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+</div>
